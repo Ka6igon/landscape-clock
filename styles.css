@@ -114,7 +114,7 @@ button { font: inherit; cursor: pointer; touch-action: manipulation; }
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: clamp(86px, 14vh, 126px);
+  grid-auto-rows: clamp(74px, 11vh, 96px);
   column-gap: 18px;
   align-content: start;
   overflow-y: auto;
@@ -133,29 +133,22 @@ button { font: inherit; cursor: pointer; touch-action: manipulation; }
 .lap-time { width: 100%; margin-top: 6px; color: inherit; font-size: clamp(23px, 5.5vw, 40px); font-variant-numeric: tabular-nums; letter-spacing: -.05em; line-height: 1; white-space: nowrap; }
 .lap-state { margin-left: 6px; color: var(--muted); font-size: .62em; font-variant-numeric: normal; }
 
-.empty-laps {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 22px 0;
-  color: var(--muted);
-  font-size: clamp(14px, 3.2vw, 19px);
-  line-height: 1.5;
-  text-align: center;
-}
-
 @media (orientation: landscape) {
+  .stopwatch-app { grid-template-rows: minmax(0, 60fr) minmax(0, 40fr); }
   .timer-panel { padding-top: max(11px, env(safe-area-inset-top)); padding-bottom: 12px; }
-  .stopwatch-readout { font-size: clamp(46px, 10vw, 112px); }
-  .control-button { min-height: clamp(62px, 12vw, 96px); font-size: clamp(19px, 3.3vw, 29px); }
-  .lap-list { grid-auto-rows: clamp(56px, 13vh, 78px); column-gap: 16px; }
-  .lap-row { padding: 6px 4px; }
-  .lap-name { font-size: clamp(14px, 2.5vw, 20px); }
-  .lap-time { margin-top: 3px; font-size: clamp(19px, 3.8vw, 29px); }
-  .empty-laps { padding: 12px 0; }
+  .stopwatch-readout { font-size: clamp(54px, 10.5vw, 126px); }
+  .control-button { min-height: clamp(70px, 13vw, 104px); font-size: clamp(21px, 3.6vw, 32px); }
+  .lap-list { grid-auto-rows: calc(100% / 3); column-gap: 16px; }
+  .lap-row { flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 4px; }
+  .lap-name { font-size: clamp(14px, 2.5vw, 21px); }
+  .lap-time { width: auto; margin-top: 0; margin-left: auto; font-size: clamp(17px, 3.8vw, 30px); text-align: right; }
 }
 
-@media (min-width: 700px) and (min-height: 700px) {
+@media (min-width: 700px) and (min-height: 700px) and (orientation: portrait) {
   .timer-panel { padding-left: max(42px, env(safe-area-inset-left)); padding-right: max(42px, env(safe-area-inset-right)); }
   .laps-panel { padding-left: max(42px, env(safe-area-inset-left)); padding-right: max(42px, env(safe-area-inset-right)); }
-  .lap-list { grid-auto-rows: clamp(112px, 13vh, 144px); }
+  .lap-list { grid-auto-rows: clamp(84px, 10vh, 108px); }
+  .lap-row { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; }
+  .lap-name { font-size: clamp(19px, 2.5vw, 27px); }
+  .lap-time { width: auto; margin-top: 0; margin-left: auto; font-size: clamp(27px, 3.8vw, 40px); text-align: right; }
 }

@@ -36,13 +36,7 @@
 
   function renderLaps(total) {
     lapList.replaceChildren();
-    if (!state.activeLapNumber) {
-      const empty = document.createElement('p');
-      empty.className = 'empty-laps';
-      empty.textContent = '開始するとラップ 1 の計測が表示されます';
-      lapList.append(empty);
-      return;
-    }
+    if (!state.activeLapNumber) return;
 
     const finalizedLaps = state.laps;
     const canRankLaps = finalizedLaps.length >= 2;
