@@ -10,7 +10,7 @@
   const state = {
     tab: 'world', cityIds: storage.get('landscape-clock-cities', ['tokyo', 'ny', 'london']),
     alarms: storage.get('landscape-clock-alarms', [{ id: 1, hour: 7, minute: 0, label: 'アラーム', days: ['月','火','水','木','金'], enabled: true }, { id: 2, hour: 8, minute: 30, label: '予定', days: [], enabled: false }]),
-    stopwatch: { running: false, elapsed: 0, startedAt: 0, laps: [], analog: false }, timers: [], editingCities: false
+    stopwatch: { running: false, elapsed: 0, startedAt: 0, laps: [], analog: false }, timers: [], editingCities: false, lastAlarmKey: ''
   };
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -65,7 +65,13 @@
   function openAlarmModal() { $('#alarm-hour').value = new Date().getHours(); $('#alarm-minute').value = 0; $('#alarm-label').value = ''; $$('.repeat-days input').forEach(i => i.checked = false); $('#alarm-modal').showModal(); }
   function ensureAudio() { try { const AudioContext = window.AudioContext || window.webkitAudioContext; if (!window.clockAudio) window.clockAudio = new AudioContext(); return window.clockAudio; } catch { return null; } }
   function ringTimer(timer) { const context = ensureAudio(); if (context) { for (let i = 0; i < 3; i++) { const osc = context.createOscillator(), gain = context.createGain(); osc.frequency.value = 880; gain.gain.setValueAtTime(.0001, context.currentTime); gain.gain.exponentialRampToValueAtTime(.16, context.currentTime + i * .35 + .02); gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + i * .35 + .25); osc.connect(gain).connect(context.destination); osc.start(context.currentTime + i * .35); osc.stop(context.currentTime + i * .35 + .26); } } navigator.vibrate?.([220,100,220]); if (document.hidden && 'Notification' in window && Notification.permission === 'granted') new Notification('タイマー完了', { body: timer.label }); }
-  function tick() { renderWorld(); state.timers.forEach(timer => { if (timer.running && timer.endAt <= Date.now()) { timer.running = false; timer.remaining = 0; ringTimer(timer); showNotice('タイマー完了', timer.label); } }); renderTimers(); }
+  function checkAlarms() {
+    const now = new Date(), weekday = ['日','月','火','水','木','金','土'][now.getDay()];
+    const due = state.alarms.find(alarm => alarm.enabled && alarm.hour === now.getHours() && alarm.minute === now.getMinutes() && (!alarm.days.length || alarm.days.includes(weekday)));
+    const key = due ? `${due.id}-${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}` : '';
+    if (due && state.lastAlarmKey !== key) { state.lastAlarmKey = key; ringTimer({ label: due.label || 'アラーム' }); showNotice('アラーム', due.label || 'アラーム'); }
+  }
+  function tick() { renderWorld(); checkAlarms(); state.timers.forEach(timer => { if (timer.running && timer.endAt <= Date.now()) { timer.running = false; timer.remaining = 0; ringTimer(timer); showNotice('タイマー完了', timer.label); } }); renderTimers(); }
   function animateStopwatch() { renderStopwatch(); if (state.stopwatch.running) requestAnimationFrame(animateStopwatch); }
   $$('.tab').forEach(button => button.addEventListener('click', () => setTab(button.dataset.tab)));
   $('#header-action').addEventListener('click', () => { if (state.tab === 'world') openCityModal(); else if (state.tab === 'alarm') openAlarmModal(); else if (state.tab === 'stopwatch') $('#dial-toggle').click(); else $('#timer-hours').focus(); });
