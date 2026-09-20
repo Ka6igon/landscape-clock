@@ -1,7 +1,7 @@
 {
-  "name": "横向き時計",
-  "short_name": "横向き時計",
-  "description": "横画面にも最適化された時計・アラーム・ストップウォッチ・タイマー",
+  "name": "ストップウォッチ",
+  "short_name": "ストップウォッチ",
+  "description": "iPhoneとiPadの縦横表示に対応したストップウォッチ",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#000000",
