@@ -44,18 +44,20 @@
       return;
     }
 
+    const finalizedLaps = state.laps;
+    const canRankLaps = finalizedLaps.length >= 2;
+    const shortest = canRankLaps ? Math.min(...finalizedLaps.map(lap => lap.elapsed)) : null;
+    const longest = canRankLaps ? Math.max(...finalizedLaps.map(lap => lap.elapsed)) : null;
+
     const addRow = (number, elapsed, active) => {
       const row = document.createElement('div');
-      row.className = `lap-row${active ? ' is-active' : ''}`;
+      const rank = !active && canRankLaps && shortest !== longest
+        ? elapsed === shortest ? ' is-best' : elapsed === longest ? ' is-worst' : ''
+        : '';
+      row.className = `lap-row${rank}`;
       const name = document.createElement('span');
       name.className = 'lap-name';
       name.textContent = `ラップ ${number}`;
-      if (active && state.running) {
-        const label = document.createElement('small');
-        label.className = 'lap-state';
-        label.textContent = '計測中';
-        name.append(label);
-      }
       const time = document.createElement('time');
       time.className = 'lap-time';
       time.textContent = formatTime(elapsed);

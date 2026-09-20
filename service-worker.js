@@ -1,4 +1,4 @@
-const CACHE = 'stopwatch-v3';
+const CACHE = 'stopwatch-v4';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.webmanifest', './icons/icon.svg'];
 
 self.addEventListener('install', event => {
