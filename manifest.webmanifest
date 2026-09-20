@@ -1,0 +1,13 @@
+{
+  "name": "横向き時計",
+  "short_name": "横向き時計",
+  "description": "横画面にも最適化された時計・アラーム・ストップウォッチ・タイマー",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "any",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

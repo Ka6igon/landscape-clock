@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="横向き時計" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>横向き時計</title>
+  </head>
+  <body>
+    <main class="app-shell" aria-live="polite">
+      <header class="app-header">
+        <div class="header-copy">
+          <p class="eyebrow" id="header-eyebrow">世界時計</p>
+          <h1 id="view-title">世界時計</h1>
+        </div>
+        <button class="icon-button header-action" id="header-action" type="button" aria-label="都市を追加" title="都市を追加">＋</button>
+      </header>
+
+      <section class="view is-active" id="world-view" data-view="world" aria-label="世界時計">
+        <div class="world-summary">
+          <p>現在地</p>
+          <strong id="local-time">--:--:--</strong>
+          <span id="local-date">----</span>
+        </div>
+        <div class="section-heading"><span>都市</span><button class="text-button" data-action="edit-cities" type="button">編集</button></div>
+        <div class="clock-list" id="clock-list"></div>
+      </section>
+
+      <section class="view" id="alarm-view" data-view="alarm" aria-label="アラーム" hidden>
+        <div class="sleep-card">
+          <div>
+            <p>睡眠｜起床</p>
+            <strong>スケジュールなし</strong>
+          </div>
+          <button class="chevron-button" type="button" data-action="sleep-info" aria-label="睡眠スケジュールの詳細">›</button>
+        </div>
+        <div class="section-heading"><span>その他</span><button class="text-button" data-action="add-alarm" type="button">＋</button></div>
+        <div class="alarm-list" id="alarm-list"></div>
+      </section>
+
+      <section class="view stopwatch-view" id="stopwatch-view" data-view="stopwatch" aria-label="ストップウォッチ" hidden>
+        <div class="stopwatch-display">
+          <p class="stopwatch-readout" id="stopwatch-readout">00:00.00</p>
+          <div class="analog-dial is-hidden" id="analog-dial" aria-label="アナログストップウォッチ">
+            <span class="dial-number n12">60</span><span class="dial-number n3">15</span><span class="dial-number n6">30</span><span class="dial-number n9">45</span>
+            <i class="hand second-hand" id="second-hand"></i><i class="hand minute-hand" id="minute-hand"></i><b></b>
+          </div>
+          <button class="appearance-button" type="button" data-action="toggle-dial" id="dial-toggle">アナログ表示</button>
+        </div>
+        <div class="stopwatch-controls">
+          <button class="round-button muted" id="lap-button" type="button">ラップ</button>
+          <button class="round-button start" id="stopwatch-start" type="button">開始</button>
+        </div>
+        <div class="lap-list" id="lap-list" aria-label="ラップ記録"></div>
+      </section>
+
+      <section class="view timer-view" id="timer-view" data-view="timer" aria-label="タイマー" hidden>
+        <div class="timer-form" id="timer-form">
+          <label><span>時間</span><input id="timer-hours" inputmode="numeric" min="0" max="23" type="number" value="0" /></label>
+          <i>:</i>
+          <label><span>分</span><input id="timer-minutes" inputmode="numeric" min="0" max="59" type="number" value="5" /></label>
+          <i>:</i>
+          <label><span>秒</span><input id="timer-seconds" inputmode="numeric" min="0" max="59" type="number" value="0" /></label>
+        </div>
+        <button class="start-timer" id="start-timer" type="button">開始</button>
+        <div class="timer-presets" aria-label="よく使うタイマー">
+          <button data-preset="60" type="button">1分</button><button data-preset="180" type="button">3分</button><button data-preset="300" type="button">5分</button><button data-preset="600" type="button">10分</button>
+        </div>
+        <div class="active-timers" id="active-timers"></div>
+      </section>
+
+      <nav class="tab-bar" aria-label="時計の機能">
+        <button class="tab is-selected" data-tab="world" type="button"><span class="tab-icon">◎</span><span>世界時計</span></button>
+        <button class="tab" data-tab="alarm" type="button"><span class="tab-icon">◷</span><span>アラーム</span></button>
+        <button class="tab" data-tab="stopwatch" type="button"><span class="tab-icon">◉</span><span>ストップウォッチ</span></button>
+        <button class="tab" data-tab="timer" type="button"><span class="tab-icon">◴</span><span>タイマー</span></button>
+      </nav>
+    </main>
+
+    <dialog class="modal" id="city-modal">
+      <form method="dialog" class="modal-panel">
+        <div class="modal-header"><button value="cancel" class="text-button" type="submit">キャンセル</button><h2>都市を追加</h2><button id="save-city" class="text-button strong" value="default" type="submit">追加</button></div>
+        <label class="select-label">都市
+          <select id="city-select"></select>
+        </label>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="alarm-modal">
+      <form method="dialog" class="modal-panel">
+        <div class="modal-header"><button value="cancel" class="text-button" type="submit">キャンセル</button><h2>アラームを追加</h2><button id="save-alarm" class="text-button strong" value="default" type="submit">保存</button></div>
+        <div class="time-fields"><input id="alarm-hour" aria-label="時" inputmode="numeric" min="0" max="23" type="number" value="7" /><span>:</span><input id="alarm-minute" aria-label="分" inputmode="numeric" min="0" max="59" type="number" value="0" /></div>
+        <label class="select-label">ラベル<input id="alarm-label" maxlength="28" placeholder="アラーム" type="text" /></label>
+        <fieldset class="repeat-days"><legend>繰り返し</legend><label><input value="月" type="checkbox" />月</label><label><input value="火" type="checkbox" />火</label><label><input value="水" type="checkbox" />水</label><label><input value="木" type="checkbox" />木</label><label><input value="金" type="checkbox" />金</label><label><input value="土" type="checkbox" />土</label><label><input value="日" type="checkbox" />日</label></fieldset>
+      </form>
+    </dialog>
+
+    <dialog class="modal small-modal" id="notice-modal">
+      <form method="dialog" class="modal-panel notice-panel"><h2 id="notice-title">お知らせ</h2><p id="notice-copy"></p><button class="round-button start" value="close" type="submit">OK</button></form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
